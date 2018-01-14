@@ -1,6 +1,6 @@
 # vcbl
 
-> Vocabulary.com CLI dictionary scraper
+> Vocabulary.com CLI dictionary
 
 ## Install
 

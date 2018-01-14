@@ -16,7 +16,7 @@ const (
 func main() {
 	app := cli.NewApp()
 	app.Name = "vcbl-cli"
-	app.Usage = "Unofficial Vocabulary.com CLI dictionary scrapper"
+	app.Usage = "Vocabulary.com CLI dictionary"
 	app.Version = "1.0.0"
 
 	app.Flags = []cli.Flag{

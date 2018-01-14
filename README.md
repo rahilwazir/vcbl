@@ -1,11 +1,11 @@
-# vcbl-cli
+# vcbl
 
 > Vocabulary.com CLI dictionary scraper
 
 ## Install
 
 ```
-$ go get https://github.com/rahilwazir/vcbl-cli
+$ go get github.com/rahilwazir/vcbl
 ```
 
 Make sure `$GOPATH/bin` is exported

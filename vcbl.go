@@ -47,6 +47,8 @@ func scrapeDefinition(c *cli.Context, lookup string) {
 	shortDesc := doc.Find("p.short").Text()
 	longDesc := doc.Find("p.long").Text()
 
+	fmt.Println()
+
 	switch c.String("desc") {
 	case "long":
 		fmt.Println(longDesc)

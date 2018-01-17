@@ -26,10 +26,6 @@ First used in the 1500s to mean a list of words with explanations, the noun voca
 
 Run `vcbl --help` for a list of further options
 
-## Todo
-- [ ] The API is case sensitive (i.e "muslim" yield no results while "Muslim" does)
-- [ ] Add flag to play pronounciation of the word with `play` cli music player
-
 ## License
 
 MIT © [Rahil Wazir](https://github.com/rahilwazir)

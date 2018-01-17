@@ -29,9 +29,9 @@ func getDefinition(c *cli.Context, lookup string) {
 
 		if retry == 0 {
 			lookup = strings.Title(lookup)
-			fmt.Printf("Trying %q...", lookup)
-			getDefinition(c, lookup)
+			fmt.Printf("Trying %q...\n", lookup)
 			retry++
+			getDefinition(c, lookup)
 		}
 
 		return

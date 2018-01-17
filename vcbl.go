@@ -29,7 +29,7 @@ func main() {
 
 	app.Action = func(c *cli.Context) error {
 		if lookup := c.Args().Get(0); lookup != "" {
-			scrapeDefinition(c, lookup)
+			getDefinition(c, lookup)
 		} else {
 			fmt.Println("No lookup!")
 		}
@@ -38,29 +38,36 @@ func main() {
 	app.Run(os.Args)
 }
 
-func scrapeDefinition(c *cli.Context, lookup string) {
+func getDefinition(c *cli.Context, lookup string) {
 	doc, err := goquery.NewDocument(fmt.Sprintf(url, lookup))
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	if doc.Find("div.noresults").Length() == 1 {
+		fmt.Println("No results.")
+		return
+	}
+
 	shortDesc := doc.Find("p.short").Text()
 	longDesc := doc.Find("p.long").Text()
 
-	fmt.Println()
+	text := fmt.Sprintln()
 
 	switch c.String("desc") {
 	case "long":
-		fmt.Println(longDesc)
+		text += fmt.Sprintln(longDesc)
 	case "both":
-		fmt.Println(shortDesc)
-		fmt.Println("------------------")
-		fmt.Println(longDesc)
+		text += fmt.Sprintln(shortDesc)
+		text += fmt.Sprintln("------------------")
+		text += fmt.Sprintln(longDesc)
 	default:
-		fmt.Println(shortDesc)
+		text += fmt.Sprintln(shortDesc)
 	}
 
 	doc.Find("table.definitionNavigator tr").Each(func(i int, tr *goquery.Selection) {
-		fmt.Printf("%s %s\n", tr.Find(".groupNumber").Text(), tr.Find(".def").Text())
+		text += fmt.Sprintf("%s %s\n", tr.Find(".groupNumber").Text(), tr.Find(".def").Text())
 	})
+
+	fmt.Print(text)
 }

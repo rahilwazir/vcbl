@@ -42,15 +42,17 @@ func getDefinition(c *cli.Context, lookup string) {
 
 	text := fmt.Sprintln()
 
-	switch c.String("desc") {
-	case "long":
-		text += fmt.Sprintln(longDesc)
-	case "both":
-		text += fmt.Sprintln(shortDesc)
-		text += fmt.Sprintln("------------------")
-		text += fmt.Sprintln(longDesc)
-	default:
-		text += fmt.Sprintln(shortDesc)
+	if doc.Find(".blurb").Length() != 0 {
+		switch c.String("desc") {
+		case "long":
+			text += fmt.Sprintln(longDesc)
+		case "both":
+			text += fmt.Sprintln(shortDesc)
+			text += fmt.Sprintln("------------------")
+			text += fmt.Sprintln(longDesc)
+		default:
+			text += fmt.Sprintln(shortDesc)
+		}
 	}
 
 	if doc.Find("table.definitionNavigator").Length() != 0 {

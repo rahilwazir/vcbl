@@ -46,9 +46,9 @@ func cliAction(cli *cli.Context) error {
 
 	fmt.Print(definition)
 
-	pronounceWord()
-
 	querySuggestions(lookup)
+
+	pronounceWord()
 
 	return nil
 }
@@ -199,7 +199,7 @@ func main() {
 			Usage: "Shows suggestion for similar words",
 		},
 		cli.BoolFlag{
-			Name:  "play",
+			Name:  "play, p",
 			Usage: "Play the word pronounciation with SoX cli. SoX must be installed",
 		},
 		cli.BoolFlag{

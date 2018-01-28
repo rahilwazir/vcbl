@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	dictionaryURL = "https://www.vocabulary.com/dictionary/definition.ajax?search=%s"
-	audioURL      = "https://audio.vocab.com/1.0/us/%s.mp3"
+	dictionaryURL   = "https://www.vocabulary.com/dictionary/definition.ajax?search=%s"
+	autocompleteURL = "https://www.vocabulary.com/dictionary/autocomplete?search=%s"
+	audioURL        = "https://audio.vocab.com/1.0/us/%s.mp3"
 )
 
 var (
@@ -33,6 +34,8 @@ func cliAction(cli *cli.Context) error {
 	}
 
 	if !queryDocument(lookup) {
+		c.Set("s", "true")
+		querySuggestions(lookup)
 		return nil
 	}
 
@@ -44,6 +47,8 @@ func cliAction(cli *cli.Context) error {
 	fmt.Print(definition)
 
 	pronounceWord()
+
+	querySuggestions(lookup)
 
 	return nil
 }
@@ -59,20 +64,20 @@ func queryDocument(lookup string) bool {
 	ret, _ := doc.Html()
 	verbose("HTML: " + ret)
 
-	if doc.Find("div.noresults").Length() == 1 {
-		if retry == 0 {
-			fmt.Println("Not found.")
-			lookup = strings.Title(lookup)
-			fmt.Printf("Trying %q...\n", lookup)
-			retry++
-			return queryDocument(lookup)
-		}
-
-		fmt.Println("Not found.")
-		return false
+	if doc.Find("div.noresults").Length() != 1 {
+		return true
 	}
 
-	return true
+	if retry == 0 {
+		fmt.Println("Not found.")
+		lookup = strings.Title(lookup)
+		fmt.Printf("Trying %q...\n", lookup)
+		retry++
+		return queryDocument(lookup)
+	}
+
+	fmt.Println("Not found.")
+	return false
 }
 
 func getDefinition(lookup string) string {
@@ -141,6 +146,36 @@ func pronounceWord() {
 	}
 }
 
+func querySuggestions(lookup string) {
+	if !c.Bool("s") {
+		return
+	}
+
+	verbose("Retrieving suggestions...")
+	document, err := goquery.NewDocument(fmt.Sprintf(autocompleteURL, lookup))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ret, _ := doc.Html()
+	verbose("HTML: " + ret)
+
+	suggestionList := document.Find(".suggestions li")
+	if suggestionList.Length() == 0 {
+		fmt.Println("Not found.")
+		return
+	}
+
+	fmt.Println("\nSuggestions:")
+	suggestionList.Each(func(index int, suggestion *goquery.Selection) {
+		entry := suggestion.Find(".entry")
+		word := entry.Find(".word").Text()
+		definition := entry.Find(".definition").Text()
+
+		fmt.Printf("%d. %q %s\n", index+1, word, definition)
+	})
+}
+
 func verbose(output string) {
 	if c.Bool("verbose") {
 		log.Println(output)
@@ -155,9 +190,13 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "desc",
+			Name:  "desc, d",
 			Value: "short",
 			Usage: "Description type of the lookup word. Possible values are: short, long, both",
+		},
+		cli.BoolFlag{
+			Name:  "suggestions, s",
+			Usage: "Shows suggestion for similar words",
 		},
 		cli.BoolFlag{
 			Name:  "play",

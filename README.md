@@ -23,6 +23,15 @@ A tool is an instrument that you use to help you accomplish some task. If you ar
 
 ## Flags
 
+```
+--desc value, -d value  Description type of the lookup word. Possible values are: short, long, both (default: "short")
+--suggestions, -s       Shows suggestion for similar words
+--play, -p              Play the word pronounciation with SoX cli. SoX must be installed
+--verbose               Debug output
+--help, -h              show help
+--version, -v           print the version
+```
+
 Run `vcbl --help` for a list of further options
 
 ## License

@@ -185,7 +185,7 @@ func verbose(output string) {
 func main() {
 	app := cli.NewApp()
 	app.Name = "vcbl-cli"
-	app.Usage = "Vocabulary.com CLI dictionary"
+	app.Usage = "CLI tool to fetch definitions from Vocabulary.com"
 	app.Version = "1.0.0"
 
 	app.Flags = []cli.Flag{

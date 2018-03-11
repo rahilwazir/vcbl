@@ -84,7 +84,7 @@ func getDefinition(lookup string) string {
 	shortDesc := doc.Find("p.short").Text()
 	longDesc := doc.Find("p.long").Text()
 
-	text := fmt.Sprintln()
+	text := ""
 
 	if doc.Find(".blurb").Length() != 0 {
 		switch c.String("desc") {
@@ -104,21 +104,37 @@ func getDefinition(lookup string) string {
 			groupNumber := tr.Find(".groupNumber").Text()
 			def := tr.Find(".def").Text()
 
-			text += fmt.Sprintf("%s %s\n", groupNumber, def)
+			if def != "" {
+				text += fmt.Sprintf("%s %s\n", groupNumber, def)
+			}
 		})
-	} else {
-		doc.Find("div.ordinal").Each(func(i int, ordinal *goquery.Selection) {
-			if i == 0 {
-				groupNumber := ordinal.Closest("div.group").Find(".groupNumber").Text()
+
+		if text != "" {
+			return text
+		}
+	}
+
+	doc.Find("div.ordinal").Each(func(i int, ordinal *goquery.Selection) {
+		if i == 0 {
+			groupNumber := ordinal.Closest("div.group").Find(".groupNumber").Text()
+			if groupNumber != "" {
 				text += fmt.Sprintf("%s.\n", groupNumber)
 			}
+		}
 
-			wordType := ordinal.Find("h3.definition").Find(".anchor").Text()
+		wordType := ordinal.Find("h3.definition").Find(".anchor").Text()
+		if wordType != "" {
 			text += fmt.Sprintf("(%s) ", wordType)
+		}
 
-			h3Definition := ordinal.Find("h3.definition").First().Contents().Eq(2).Text()
+		h3Definition := ordinal.Find("h3.definition").First().Contents().Eq(2).Text()
+		if h3Definition != "" {
 			text += fmt.Sprintf("%s\n", strings.TrimSpace(h3Definition))
-		})
+		}
+	})
+
+	if text == "" {
+		return "Not found."
 	}
 
 	return text
